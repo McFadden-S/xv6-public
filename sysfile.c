@@ -443,7 +443,9 @@ sys_pipe(void)
   return 0;
 }
 
-
+// system call to protects memory i.e. set it as readonly
+// starts at address addr and protects len pages
+// addr has to be page aligned
 int 
 sys_mprotect(void)
 {
@@ -467,6 +469,9 @@ sys_mprotect(void)
   return readonly(curproc->pgdir, addr, len);
 }
 
+// system call to unprotects memory i.e. set it to writeable
+// starts at address addr and protects len pages
+// addr has to be page aligned
 int 
 sys_munprotect(void)
 {

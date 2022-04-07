@@ -392,6 +392,11 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+// starts at addr of page directory pgdir and sets len pages to readonly
+// addr has to be page aligned 
+// updates the cr3 to reflect permission changes
+// if page table entry dont exist or arent present and available returns -1
+// returns 0 on successfull change
 int 
 readonly(pde_t *pgdir, void *addr, uint len)
 {
@@ -421,6 +426,11 @@ readonly(pde_t *pgdir, void *addr, uint len)
   return 0;
 }
 
+// starts at addr of page directory pgdir and sets len pages to writeable
+// addr has to be page aligned 
+// updates the cr3 to reflect permission changes
+// if page table entry dont exist or arent present and available returns -1
+// returns 0 on successfull change
 int
 writeable(pde_t *pgdir, void *addr, uint len)
 {
