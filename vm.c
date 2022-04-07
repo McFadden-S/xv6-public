@@ -398,7 +398,12 @@ readonly(pde_t *pgdir, void *addr, uint len)
   pte_t *pte;
 
   for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    //Check if page table entry exists
     if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
+      return -1;
+    }
+    //Check if page is present
+    else if(!(*pte & PTE_P)){
       return -1;
     }
     else{
@@ -414,7 +419,12 @@ writeable(pde_t *pgdir, void *addr, uint len)
   pte_t *pte;
 
   for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    //Check if page table entry exists
     if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
+      return -1;
+    }
+    //Check if page is present
+    else if(!(*pte & PTE_P)){
       return -1;
     }
     else{

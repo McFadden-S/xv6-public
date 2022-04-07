@@ -464,7 +464,7 @@ sys_mprotect(void)
   }
 
   //checks if pointer is page aligned
-  if(*(uint *)addr % PGSIZE != 0){
+  if((uint)addr % PGSIZE != 0){
     return -1;
   }
 
@@ -494,7 +494,7 @@ sys_munprotect(void)
   }
 
   //checks if pointer is page aligned
-  if(*(uint *)addr % PGSIZE != 0){
+  if((uint)addr % PGSIZE != 0){
     return -1;
   }
 
