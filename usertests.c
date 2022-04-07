@@ -1763,9 +1763,8 @@ void protecttest()
   }
 
 	printf(stdout,"Writing to Protected will be trapped: ");
-  if((pid = fork()) > 0){
+  if((pid = fork()) == 0){
     *p = 100;
-    wait();
   }
 	
   if(munprotect((void *)p, pageProtectCount) == -1){
@@ -1780,6 +1779,7 @@ void protecttest()
     exit();
   }
 
+  wait();
   printf(stdout, "protect/unprotect test ok\n");
   
 }
