@@ -1748,31 +1748,40 @@ rand()
 
 void protecttest()
 {
+  printf(stdout, "protect/unprotect test\n");
+
   int pageProtectCount = 2;
  	int *p = (int *) sbrk(pageProtectCount*PGSIZE);
   
+  int pid = 0;
+  
+  *p = 5;
+
   if(mprotect((void *) p, pageProtectCount) == -1){
     printf(stdout, "protect test failed\n");
     exit();
   }
 
-	printf(stdout,"about to write if memfault then protect test successful\n");
-	*p = 100;
-
-  if(munprotect((void *)p, sizeof(int)) == -1){
+	printf(stdout,"Writing to Protected will be trapped: ");
+  if((pid = fork()) > 0){
+    *p = 100;
+    wait();
+  }
+	
+  if(munprotect((void *)p, pageProtectCount) == -1){
     printf(stdout, "unprotect test failed\n");
     exit();
   }
 
   *p = 100;
 
-  if(*p == 100){
-    printf(stdout, "protect/unprotect test ok\n");
+  if(*p != 100){
+    printf(stdout, "protect/unprotect test failed\n");
     exit();
   }
 
-  printf(stdout, "protect/unprotect test failed\n");
-  exit();
+  printf(stdout, "protect/unprotect test ok\n");
+  
 }
 
 int
