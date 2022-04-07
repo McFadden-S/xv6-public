@@ -407,9 +407,14 @@ readonly(pde_t *pgdir, void *addr, uint len)
       return -1;
     }
     else{
+      //set page table entry to be read only
       *pte &= ~PTE_W;
     }
   }
+
+  //update page table base register 
+  lcr3(V2P(pgdir));
+
   return 0;
 }
 
@@ -428,9 +433,14 @@ writeable(pde_t *pgdir, void *addr, uint len)
       return -1;
     }
     else{
+      //set page table entry to be writeable
       *pte |= PTE_W;
     }
   }
+
+  //update page table base register
+  lcr3(V2P(pgdir));
+
   return 0;
 }
 
