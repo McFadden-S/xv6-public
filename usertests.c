@@ -7,6 +7,7 @@
 #include "syscall.h"
 #include "traps.h"
 #include "memlayout.h"
+#include "mmu.h"
 
 char buf[8192];
 char name[3];
@@ -1745,6 +1746,35 @@ rand()
   return randstate;
 }
 
+void protecttest()
+{
+  int pageProtectCount = 2;
+ 	int *p = (int *) sbrk(pageProtectCount*PGSIZE);
+  
+  if(mprotect((void *) p, pageProtectCount) == -1){
+    printf(stdout, "protect test failed\n");
+    exit();
+  }
+
+	printf(stdout,"about to write if memfault then protect test successful\n");
+	*p = 100;
+
+  if(munprotect((void *)p, sizeof(int)) == -1){
+    printf(stdout, "unprotect test failed\n");
+    exit();
+  }
+
+  *p = 100;
+
+  if(*p == 100){
+    printf(stdout, "protect/unprotect test ok\n");
+    exit();
+  }
+
+  printf(stdout, "protect/unprotect test failed\n");
+  exit();
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -1755,6 +1785,8 @@ main(int argc, char *argv[])
     exit();
   }
   close(open("usertests.ran", O_CREATE));
+
+  protecttest();
 
   argptest();
   createdelete();

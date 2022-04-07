@@ -444,7 +444,6 @@ sys_pipe(void)
 }
 
 
-//Should this be in sysfile or sysproc
 int 
 sys_mprotect(void)
 {
@@ -454,19 +453,16 @@ sys_mprotect(void)
   struct proc *curproc = myproc();
 
   //checks if length is invalid
-  if(argint(1, &len) <= 0){
+  if(argint(1, &len) < 0 || len <= 0)
     return -1;
-  }
 
   //checks if address or address range is invalid
-  if(argptr(0, (char **)&addr, len * PGSIZE) < 0){
+  if(argptr(0, (char **)&addr, len * PGSIZE) < 0)
     return -1;
-  }
 
   //checks if pointer is page aligned
-  if((uint)addr % PGSIZE != 0){
+  if((uint)addr % PGSIZE != 0)
     return -1;
-  }
 
   return readonly(curproc->pgdir, addr, len);
 }
@@ -481,19 +477,16 @@ sys_munprotect(void)
   struct proc *curproc = myproc();
 
   //checks if length is invalid
-  if(argint(1, &len) <= 0){
+  if(argint(1, &len) < 0 || len <= 0)
     return -1;
-  }
 
   //checks if address or address range is invalid
-  if(argptr(0, (char **)&addr, len * PGSIZE) < 0){
+  if(argptr(0, (char **)&addr, len * PGSIZE) < 0)
     return -1;
-  }
 
   //checks if pointer is page aligned
-  if((uint)addr % PGSIZE != 0){
+  if((uint)addr % PGSIZE != 0)
     return -1;
-  }
 
   return writeable(curproc->pgdir, addr, len);
 }
