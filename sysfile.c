@@ -442,3 +442,64 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+
+
+//Should this be in sysfile or sysproc
+int 
+sys_mprotect(void)
+{
+  void *addr;
+  int len;
+
+  struct proc *curproc = myproc();
+
+  //checks if length is invalid
+  if(argint(1, &len) <= 0){
+    return -1;
+  }
+
+  //checks if address or address range is invalid
+  if(argptr(0, (char **)&addr, len * PGSIZE) < 0){
+    return -1;
+  }
+
+  //checks if pointer is page aligned
+  if(*(uint *)addr % PGSIZE != 0){
+    return -1;
+  }
+
+  return readonly(curproc->pgdir, addr, len);
+
+  //if addr is not page aligned, or addr points to a region that is not currently a part of the address space
+  //Check arguments then call a set readonly function in vm.c
+}
+
+int 
+sys_munprotect(void)
+{
+
+  void *addr;
+  int len;
+
+  struct proc *curproc = myproc();
+
+  //checks if length is invalid
+  if(argint(1, &len) <= 0){
+    return -1;
+  }
+
+  //checks if address or address range is invalid
+  if(argptr(0, (char **)&addr, len * PGSIZE) < 0){
+    return -1;
+  }
+
+  //checks if pointer is page aligned
+  if(*(uint *)addr % PGSIZE != 0){
+    return -1;
+  }
+
+  return writeable(curproc->pgdir, addr, len);
+
+  //if addr is not page aligned, or addr points to a region that is not currently a part of the address space
+  //Check arguments then call a set writeable function in vm.c
+}

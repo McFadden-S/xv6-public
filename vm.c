@@ -392,6 +392,38 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+int 
+readonly(pde_t *pgdir, void *addr, uint len)
+{
+  pte_t *pte;
+
+  for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
+      return -1;
+    }
+    else{
+      *pte &= ~PTE_W;
+    }
+  }
+  return 0;
+}
+
+int
+writeable(pde_t *pgdir, void *addr, uint len)
+{
+  pte_t *pte;
+
+  for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
+      return -1;
+    }
+    else{
+      *pte |= PTE_W;
+    }
+  }
+  return 0;
+}
+
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!
