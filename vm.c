@@ -397,19 +397,22 @@ readonly(pde_t *pgdir, void *addr, uint len)
 {
   pte_t *pte;
 
+  //Ensure address space is valid before making changes to flags
   for(int i = 0; i < len*PGSIZE; i += PGSIZE){
     //Check if page table entry exists
     if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
       return -1;
     }
-    //Check if page is present
-    else if(!(*pte & PTE_P)){
+    //Check if page is present and available to user
+    else if(!(*pte & PTE_P) && !(*pte & PTE_U)){
       return -1;
     }
-    else{
-      //set page table entry to be read only
-      *pte &= ~PTE_W;
-    }
+  }
+
+  for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    pte = walkpgdir(pgdir, addr+i, 0);
+    //set page table entry to be read only
+    *pte &= ~PTE_W;
   }
 
   //update page table base register 
@@ -423,19 +426,22 @@ writeable(pde_t *pgdir, void *addr, uint len)
 {
   pte_t *pte;
 
+  //Ensure address space is valid before making changes to flags
   for(int i = 0; i < len*PGSIZE; i += PGSIZE){
     //Check if page table entry exists
     if((pte = walkpgdir(pgdir, addr+i, 0)) == 0){
       return -1;
     }
-    //Check if page is present
-    else if(!(*pte & PTE_P)){
+    //Check if page is present and available to user
+    else if(!(*pte & PTE_P) && !(*pte & PTE_U)){
       return -1;
     }
-    else{
-      //set page table entry to be writeable
-      *pte |= PTE_W;
-    }
+  }
+
+  for(int i = 0; i < len*PGSIZE; i += PGSIZE){
+    pte = walkpgdir(pgdir, addr+i, 0);
+    //set page table entry to be writeable
+    *pte |= PTE_W;
   }
 
   //update page table base register

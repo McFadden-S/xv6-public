@@ -469,9 +469,6 @@ sys_mprotect(void)
   }
 
   return readonly(curproc->pgdir, addr, len);
-
-  //if addr is not page aligned, or addr points to a region that is not currently a part of the address space
-  //Check arguments then call a set readonly function in vm.c
 }
 
 int 
@@ -499,7 +496,4 @@ sys_munprotect(void)
   }
 
   return writeable(curproc->pgdir, addr, len);
-
-  //if addr is not page aligned, or addr points to a region that is not currently a part of the address space
-  //Check arguments then call a set writeable function in vm.c
 }
